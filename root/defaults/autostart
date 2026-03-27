@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Seed MCP config on first run
+mkdir -p "${HOME}/.config/Claude"
+if [ ! -f "${HOME}/.config/Claude/claude_desktop_config.json" ]; then
+    cp /defaults/claude_desktop_config.json "${HOME}/.config/Claude/claude_desktop_config.json"
+fi
+
+# Launch Claude Desktop (Cowork host backend via env var)
+CLAUDE_COWORK_BACKEND=host claude-desktop
