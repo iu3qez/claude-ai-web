@@ -23,7 +23,8 @@ RUN curl -fsSL https://aaddrick.github.io/claude-desktop-debian/KEY.gpg \
     sed -i 's|Exec=/usr/bin/claude-desktop %u|Exec=/usr/bin/claude-desktop --no-sandbox %u|' \
         /usr/share/applications/claude-desktop.desktop && \
     BUN_INSTALL=/usr/local bun install -g @anthropic-ai/claude-code && \
-    ln -s /usr/local/bin/bun /usr/local/bin/node
+    ln -s /usr/local/bin/bun /usr/local/bin/node && \
+    rm -rf /root/.bun/install/cache
 
 COPY autostart /defaults/autostart
 COPY claude_desktop_config.json /defaults/claude_desktop_config.json
