@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "email": {
+      "url": "https://REPLACE_EMAIL_MCP_URL/mcp"
+    },
+    "telegram": {
+      "url": "https://REPLACE_TELEGRAM_MCP_URL/mcp"
+    },
+    "whatsapp": {
+      "url": "https://REPLACE_WHATSAPP_MCP_URL/mcp"
+    }
+  }
+}
