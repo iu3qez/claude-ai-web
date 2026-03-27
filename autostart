@@ -7,4 +7,4 @@ if [ ! -f "${HOME}/.config/Claude/claude_desktop_config.json" ]; then
 fi
 
 # Launch Claude Desktop (Cowork host backend via env var)
-CLAUDE_COWORK_BACKEND=host claude-desktop
+CLAUDE_COWORK_BACKEND=host claude-desktop --no-sandbox

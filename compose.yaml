@@ -28,3 +28,8 @@ services:
       - "traefik.http.routers.claude-ai-web-rtr.service=claude-ai-web-svc"
       - "traefik.http.services.claude-ai-web-svc.loadbalancer.server.port=3000"
       - "traefik.http.services.claude-ai-web-svc.loadbalancer.server.scheme=http"
+      # WebSocket router: no Authentik (WS can't do OAuth redirects), higher priority
+      - "traefik.http.routers.claude-ai-web-ws-rtr.rule=Host(`claude-ai.${DOMAINNAME}`) && PathPrefix(`/websocket`)"
+      - "traefik.http.routers.claude-ai-web-ws-rtr.entrypoints=websecure"
+      - "traefik.http.routers.claude-ai-web-ws-rtr.priority=20"
+      - "traefik.http.routers.claude-ai-web-ws-rtr.service=claude-ai-web-svc"
