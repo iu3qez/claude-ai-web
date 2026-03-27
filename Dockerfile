@@ -13,6 +13,7 @@ RUN curl -fsSL https://aaddrick.github.io/claude-desktop-debian/KEY.gpg \
     rm -rf /var/lib/apt/lists/*
 
 # Copy defaults (autostart + MCP config template)
-COPY root/ /
+COPY autostart /defaults/autostart
+COPY claude_desktop_config.json /defaults/claude_desktop_config.json
 
 EXPOSE 3000 3001
