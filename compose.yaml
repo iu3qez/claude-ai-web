@@ -1,0 +1,30 @@
+name: claude-ai-web
+
+networks:
+  traefik:
+    external: true
+    name: traefik
+
+services:
+  claude-ai-web:
+    build: .
+    container_name: claude-ai-web
+    restart: unless-stopped
+    networks:
+      - traefik
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - TITLE=Claude Assistant
+      - SELKIES_MANUAL_WIDTH=1920
+      - SELKIES_MANUAL_HEIGHT=1080
+      - RESTART_APP=true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.claude-ai-web-rtr.rule=Host(`claude-ai.${DOMAINNAME}`)"
+      - "traefik.http.routers.claude-ai-web-rtr.entrypoints=websecure"
+      - "traefik.http.routers.claude-ai-web-rtr.middlewares=chain-forwardAuth-authentik@file"
+      - "traefik.http.routers.claude-ai-web-rtr.service=claude-ai-web-svc"
+      - "traefik.http.services.claude-ai-web-svc.loadbalancer.server.port=3000"
+      - "traefik.http.services.claude-ai-web-svc.loadbalancer.server.scheme=http"
