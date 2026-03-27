@@ -10,5 +10,10 @@ fi
 eval $(echo "" | gnome-keyring-daemon --start --daemonize --components=secrets 2>/dev/null)
 export GNOME_KEYRING_CONTROL
 
-# Launch Claude Desktop (Cowork host backend via env var)
-CLAUDE_COWORK_BACKEND=host claude-desktop --no-sandbox --disable-gpu --disable-gpu-compositing --disable-dev-shm-usage
+# Start Cowork socket daemon (creates $XDG_RUNTIME_DIR/cowork-vm-service.sock)
+mkdir -p "${XDG_RUNTIME_DIR:-/config/.XDG}"
+XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/config/.XDG}" /usr/bin/cowork-svc-linux >> /config/cowork-svc.log 2>&1 &
+sleep 2
+
+# Launch Claude Desktop
+claude-desktop --no-sandbox --disable-gpu --disable-gpu-compositing --disable-dev-shm-usage

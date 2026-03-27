@@ -1,13 +1,3 @@
 {
-  "mcpServers": {
-    "email": {
-      "url": "https://composio_mcp.fabris.me/mcp"
-    },
-    "telegram": {
-      "url": "https://REPLACE_TELEGRAM_MCP_URL/mcp"
-    },
-    "whatsapp": {
-      "url": "https://REPLACE_WHATSAPP_MCP_URL/mcp"
-    }
-  }
+  "mcpServers": {}
 }

@@ -11,6 +11,8 @@ services:
     container_name: claude-ai-web
     restart: unless-stopped
     shm_size: "1gb"
+    security_opt:
+      - seccomp:unconfined
     networks:
       - traefik
     environment:
