@@ -6,5 +6,9 @@ if [ ! -f "${HOME}/.config/Claude/claude_desktop_config.json" ]; then
     cp /defaults/claude_desktop_config.json "${HOME}/.config/Claude/claude_desktop_config.json"
 fi
 
+# Start gnome-keyring so Electron safeStorage can persist the OAuth token
+eval $(echo "" | gnome-keyring-daemon --start --daemonize --components=secrets 2>/dev/null)
+export GNOME_KEYRING_CONTROL
+
 # Launch Claude Desktop (Cowork host backend via env var)
-CLAUDE_COWORK_BACKEND=host claude-desktop --no-sandbox
+CLAUDE_COWORK_BACKEND=host claude-desktop --no-sandbox --disable-gpu --disable-gpu-compositing --disable-dev-shm-usage

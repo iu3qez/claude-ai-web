@@ -9,9 +9,10 @@ RUN curl -fsSL https://aaddrick.github.io/claude-desktop-debian/KEY.gpg \
         https://aaddrick.github.io/claude-desktop-debian stable main" \
         > /etc/apt/sources.list.d/claude-desktop.list && \
     apt-get update && \
-    apt-get install -y --no-install-recommends claude-desktop chromium && \
+    apt-get install -y --no-install-recommends claude-desktop chromium gnome-keyring libsecret-1-0 && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /etc/chromium.d && echo 'CHROMIUM_FLAGS="$CHROMIUM_FLAGS --no-sandbox"' > /etc/chromium.d/no-sandbox
+    mkdir -p /etc/chromium.d && echo 'CHROMIUM_FLAGS="$CHROMIUM_FLAGS --no-sandbox"' > /etc/chromium.d/no-sandbox && \
+    sed -i 's|Exec=/usr/bin/claude-desktop %u|Exec=/usr/bin/claude-desktop --no-sandbox %u|' /usr/share/applications/claude-desktop.desktop
 
 # Copy defaults (autostart + MCP config template)
 COPY autostart /defaults/autostart
