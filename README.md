@@ -81,10 +81,12 @@ Everything under `/config/` persists across restarts:
 
 ## Credits
 
-- [linuxserver/docker-baseimage-selkies](https://github.com/linuxserver/docker-baseimage-selkies) — GPL-3.0
-- [aaddrick/claude-desktop-debian](https://github.com/aaddrick/claude-desktop-debian) — Apache-2.0
-- [patrickjaja/claude-cowork-service](https://github.com/patrickjaja/claude-cowork-service) — MIT
-- [oven-sh/bun](https://github.com/oven-sh/bun) — MIT
+This project stands on the shoulders of these excellent open source projects:
+
+- **[linuxserver/docker-baseimage-selkies](https://github.com/linuxserver/docker-baseimage-selkies)** by the [LinuxServer.io](https://www.linuxserver.io/) team — the WebRTC remote desktop base image that makes browser-accessible containers possible (GPL-3.0)
+- **[aaddrick/claude-desktop-debian](https://github.com/aaddrick/claude-desktop-debian)** by [@aaddrick](https://github.com/aaddrick) — the unofficial Electron-based Claude Desktop port for Linux, without which none of this would be possible (Apache-2.0)
+- **[patrickjaja/claude-cowork-service](https://github.com/patrickjaja/claude-cowork-service)** by [@patrickjaja](https://github.com/patrickjaja) — the key piece that makes Cowork work on Linux by implementing the VM socket protocol without a hypervisor (MIT)
+- **[oven-sh/bun](https://github.com/oven-sh/bun)** by the [Oven](https://oven.sh/) team — fast JavaScript runtime used to run Claude Code CLI (MIT)
 
 ## License
 
