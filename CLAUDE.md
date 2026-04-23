@@ -27,11 +27,21 @@ docker exec claude-ai-web tail -f /config/.config/Claude/logs/main.log   # Elect
 
 ### Autostart / watchdog interaction (fragile — read before editing `autostart`)
 
-The base image's s6 watchdog (`RESTART_APP=true`) monitors a process matching `sh $HOME/.config/openbox/autostart` and restarts it whenever that PID disappears. Three things must all hold for the system to be stable:
+The base image's s6 watchdog (`RESTART_APP=true`) monitors a process matching `sh $HOME/.config/openbox/autostart` and restarts it whenever that PID disappears. Two things must hold for the system to be stable:
 
 1. **Don't `exec` inside `autostart`.** `exec` replaces the `sh autostart` process, making the watchdog lose it and relaunch a second one. Keep the final command in foreground without `exec`.
-2. **Detach `cowork-svc-linux` with `setsid`.** When `sh autostart` exits, s6 kills its process group; a plain `&` spawn gets SIGTERM'd. `setsid --fork` moves it into a new session that survives.
-3. **Don't spawn a second `claude-desktop` if one is already running.** Electron's singleton lock makes the duplicate exit immediately → `sh autostart` exits → watchdog restarts → duplicate exits... infinite loop. The `pgrep -f "electron.*app\.asar"` check gates this; the fallback is `sleep infinity` so the watchdog keeps seeing a live `sh autostart`.
+2. **Don't spawn a second `claude-desktop` if one is already running.** Electron's singleton lock makes the duplicate exit immediately → `sh autostart` exits → watchdog restarts → duplicate exits... infinite loop. The `pgrep -f "electron.*app\.asar"` check gates this; the fallback is `sleep infinity` so the watchdog keeps seeing a live `sh autostart`.
+
+### `cowork-svc-linux` is an s6 custom service (not in autostart)
+
+Defined in `custom-services.d/cowork`, copied to `/custom-services.d/cowork` by the Dockerfile. It runs as `abc` via `s6-setuidgid` and is supervised independently from openbox/autostart.
+
+**`sleep 5` at the top is load-bearing.** Without it, cowork's `bind()` on `/config/.XDG/cowork-vm-service.sock` succeeds and the kernel shows it in `ss -lnx LISTEN`, but the socket file never appears in the filesystem. Symptom downstream: claude-desktop fails with `EACCES` or "VM service not running. The service failed to start." Likely a race with Docker volume-mount finalization on `/config`. A few seconds of delay is enough.
+
+If symptoms recur, the manual recovery is:
+```bash
+docker exec claude-ai-web bash -c "pkill -9 -xf /usr/bin/cowork-svc-linux; sleep 2; rm -f /config/.XDG/cowork-vm-service.sock; su abc -c 'setsid --fork env XDG_RUNTIME_DIR=/config/.XDG /usr/bin/cowork-svc-linux >> /config/cowork-svc.log 2>&1 < /dev/null'"
+```
 
 ### `pgrep` gotcha
 
