@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bash
+
+# Cowork socket daemon, run as abc and supervised by s6.
+#
+# Wait for /config volume to settle. Without this delay, cowork-svc-linux can
+# bind() the socket file but it never becomes visible in the filesystem (only
+# `ss -lnx` sees the LISTEN), making claude-desktop fail with EACCES /
+# "VM service not running". A few seconds is enough for the volume mount to
+# stabilize.
+sleep 5
+
+mkdir -p "${XDG_RUNTIME_DIR:-/config/.XDG}"
+chown abc:abc "${XDG_RUNTIME_DIR:-/config/.XDG}"
+rm -f "${XDG_RUNTIME_DIR:-/config/.XDG}/cowork-vm-service.sock"
+
+exec s6-setuidgid abc env XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/config/.XDG}" \
+    /usr/bin/cowork-svc-linux

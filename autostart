@@ -10,12 +10,8 @@ fi
 eval $(echo "" | gnome-keyring-daemon --start --daemonize --components=secrets 2>/dev/null)
 export GNOME_KEYRING_CONTROL
 
-# Start Cowork socket daemon only if not already running
-if ! pgrep -xf /usr/bin/cowork-svc-linux > /dev/null; then
-    mkdir -p "${XDG_RUNTIME_DIR:-/config/.XDG}"
-    XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/config/.XDG}" /usr/bin/cowork-svc-linux >> /config/cowork-svc.log 2>&1 &
-    sleep 2
-fi
+# Cowork socket daemon is now managed by s6 as /custom-services.d/cowork
+# (it starts before this autostart runs and is supervised independently).
 
 # If Claude Desktop is already running, don't spawn a duplicate (singleton lock
 # would immediately kill it and trigger the watchdog restart loop). Just wait —

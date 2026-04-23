@@ -29,4 +29,7 @@ RUN curl -fsSL http://pkg.claude-desktop-debian.dev/KEY.gpg \
 COPY autostart /defaults/autostart
 COPY claude_desktop_config.json /defaults/claude_desktop_config.json
 
+# linuxserver-style custom service: cowork-svc-linux supervised by s6
+COPY --chmod=755 custom-services.d/cowork /custom-services.d/cowork
+
 EXPOSE 3000 3001
