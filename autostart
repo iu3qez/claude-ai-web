@@ -10,10 +10,23 @@ fi
 eval $(echo "" | gnome-keyring-daemon --start --daemonize --components=secrets 2>/dev/null)
 export GNOME_KEYRING_CONTROL
 
-# Start Cowork socket daemon (creates $XDG_RUNTIME_DIR/cowork-vm-service.sock)
-mkdir -p "${XDG_RUNTIME_DIR:-/config/.XDG}"
-XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/config/.XDG}" /usr/bin/cowork-svc-linux >> /config/cowork-svc.log 2>&1 &
-sleep 2
+# Start Cowork socket daemon only if not already running
+if ! pgrep -xf /usr/bin/cowork-svc-linux > /dev/null; then
+    mkdir -p "${XDG_RUNTIME_DIR:-/config/.XDG}"
+    XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/config/.XDG}" /usr/bin/cowork-svc-linux >> /config/cowork-svc.log 2>&1 &
+    sleep 2
+fi
 
-# Launch Claude Desktop
+# If Claude Desktop is already running, don't spawn a duplicate (singleton lock
+# would immediately kill it and trigger the watchdog restart loop). Just wait —
+# the s6 watchdog only looks for THIS autostart script PID, so keeping it alive
+# prevents the restart cycle.
+if pgrep -f "electron.*app\.asar" > /dev/null; then
+    sleep infinity
+fi
+
+# Fresh start: clean stale singleton locks from previous crashes
+rm -f "${HOME}/.config/Claude/Singleton"*
+
+# Run in foreground (no exec) so s6 watchdog can still see this script's PID.
 claude-desktop --no-sandbox --disable-gpu --disable-gpu-compositing --disable-dev-shm-usage

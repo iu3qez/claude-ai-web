@@ -6,10 +6,10 @@ ENV TITLE="Claude Assistant"
 COPY --from=oven/bun:latest /usr/local/bin/bun /usr/local/bin/bun
 
 # Add APT repos, install packages, and set up Claude Code CLI in one layer
-RUN curl -fsSL https://aaddrick.github.io/claude-desktop-debian/KEY.gpg \
+RUN curl -fsSL http://pkg.claude-desktop-debian.dev/KEY.gpg \
         | gpg --dearmor -o /usr/share/keyrings/claude-desktop.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/claude-desktop.gpg arch=amd64,arm64] \
-        https://aaddrick.github.io/claude-desktop-debian stable main" \
+        http://pkg.claude-desktop-debian.dev stable main" \
         > /etc/apt/sources.list.d/claude-desktop.list && \
     curl -fsSL https://patrickjaja.github.io/claude-cowork-service/install.sh | bash && \
     apt-get update && \
